@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mom's World Travels ✈️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0d1b2a;
+      --gold: #c9a84c;
+      --cream: #f5f0e8;
+      --rose: #c17a7a;
+      --teal: #3a7d8c;
+      --light: #faf8f3;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Stars background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 95% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 12%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 5% 50%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.3);
+    }
+
+    .subtitle {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--cream);
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .plane-icon {
+      font-size: 2rem;
+      display: block;
+      margin: 16px auto 0;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(5deg); }
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: var(--gold);
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(245, 240, 232, 0.5);
+      margin-top: 6px;
+      display: block;
+    }
+
+    #map {
+      width: 100%;
+      height: 520px;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(201, 168, 76, 0.2);
+      border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+    }
+
+    .map-scroll-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(13, 27, 42, 0.85);
+      border: 1px solid rgba(201, 168, 76, 0.4);
+      color: var(--gold);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border-radius: 3px;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    #map:hover .map-scroll-hint {
+      /* hint is shown via JS on scroll-over-map */
+    }
+
+    .countries-section {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 30px 80px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+    }
+
+    .section-title::before,
+    .section-title::after {
+      content: ' — ';
+      color: rgba(201, 168, 76, 0.4);
+    }
+
+    .continents {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 30px;
+    }
+
+    .continent-group {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: 4px;
+      padding: 24px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .continent-group:hover {
+      border-color: rgba(201, 168, 76, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .continent-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+    }
+
+    .country-list {
+      list-style: none;
+    }
+
+    .country-list li {
+      padding: 6px 0;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: rgba(245, 240, 232, 0.85);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .country-list li:last-child {
+      border-bottom: none;
+    }
+
+    .country-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 30px 20px;
+      border-top: 1px solid rgba(201, 168, 76, 0.15);
+      font-size: 0.8rem;
+      color: rgba(245, 240, 232, 0.3);
+      letter-spacing: 2px;
+      font-weight: 300;
+    }
+
+    /* Leaflet overrides */
+    .leaflet-container {
+      background: #1a2c40 !important;
+    }
+
+    .leaflet-popup-content-wrapper {
+      background: var(--navy);
+      border: 1px solid var(--gold);
+      border-radius: 2px;
+      color: var(--cream);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .leaflet-popup-tip {
+      background: var(--gold);
+    }
+
+    .leaflet-popup-content {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      padding: 4px 2px;
+    }
+
+    .popup-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .leaflet-bar a {
+      background: var(--navy) !important;
+      color: var(--gold) !important;
+      border-color: rgba(201, 168, 76, 0.3) !important;
+    }
+
+    .leaflet-attribution-flag { display: none !important; }
+
+    .leaflet-tooltip-custom {
+      background: var(--navy);
+      border: 1px solid rgba(201, 168, 76, 0.5);
+      border-radius: 3px;
+      color: var(--cream);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      padding: 5px 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    .leaflet-tooltip-custom::before {
+      border-top-color: rgba(201, 168, 76, 0.5) !important;
+    }
+
+    /* Modal overlay */
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(5, 10, 18, 0.92);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    #modal.open { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-card {
+      position: relative;
+      max-width: 780px;
+      width: 92%;
+      border: 1px solid rgba(201, 168, 76, 0.4);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-img-wrap {
+      position: relative;
+      height: 420px;
+      overflow: hidden;
+      background: #0d1b2a;
+    }
+    .modal-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 8s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .modal-img-wrap img.loaded { transform: scale(1.05); opacity: 1; }
+    .modal-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,27,42,0.92) 0%, rgba(13,27,42,0.05) 50%, transparent 100%);
+      pointer-events: none;
+    }
+    .modal-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px 32px;
+    }
+    .modal-country {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: var(--cream); line-height: 1; margin-bottom: 6px;
+    }
+    .modal-caption {
+      font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold); font-weight: 300;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px;
+      background: rgba(13,27,42,0.7);
+      border: 1px solid rgba(201, 168, 76, 0.4);
+      color: var(--cream); font-size: 1.1rem;
+      width: 34px; height: 34px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; z-index: 10;
+    }
+    .modal-close:hover { background: rgba(201, 168, 76, 0.2); }
+
+    .modal-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px;
+      background: rgba(13,27,42,0.98);
+      border-top: 1px solid rgba(201, 168, 76, 0.15);
+    }
+    .nav-btn {
+      background: none; border: 1px solid rgba(201, 168, 76, 0.3);
+      color: var(--gold); font-family: 'Lato', sans-serif;
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      padding: 8px 18px; cursor: pointer; border-radius: 2px; transition: background 0.2s;
+    }
+    .nav-btn:hover { background: rgba(201, 168, 76, 0.1); }
+    .nav-btn:disabled { opacity: 0.25; cursor: default; }
+    .photo-dots { display: flex; gap: 6px; }
+    .photo-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(201, 168, 76, 0.3); transition: background 0.2s; cursor: pointer;
+    }
+    .photo-dot.active { background: var(--gold); }
+    .modal-loading {
+      position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center;
+      background: #0d1b2a; z-index: 5; font-size: 2.5rem;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  </style>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <header>
+    <p class="subtitle">A Life Well Traveled</p>
+    <h1>Mom's <em>World</em> Travels</h1>
+    <span class="plane-icon">✈️</span>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-number">27</span>
+      <span class="stat-label">Countries & Territories</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">3</span>
+      <span class="stat-label">Continents</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">∞</span>
+      <span class="stat-label">Memories Made</span>
+    </div>
+  </div>
+
+  <div id="map"><div class="map-scroll-hint" id="mapHint">Use ctrl + scroll to zoom</div></div>
+
+  <div class="countries-section">
+    <h2 class="section-title">All Destinations</h2>
+    <div class="continents">
+
+      <div class="continent-group">
+        <div class="continent-name">🌍 Europe</div>
+        <ul class="country-list">
+          <li><span class="country-dot"></span>France</li>
+          <li><span class="country-dot"></span>United Kingdom</li>
+          <li><span class="country-dot"></span>Northern Ireland</li>
+          <li><span class="country-dot"></span>Ireland</li>
+          <li><span class="country-dot"></span>Netherlands</li>
+          <li><span class="country-dot"></span>Belgium</li>
+          <li><span class="country-dot"></span>Switzerland</li>
+          <li><span class="country-dot"></span>Monaco</li>
+          <li><span class="country-dot"></span>Andorra</li>
+          <li><span class="country-dot"></span>Spain</li>
+          <li><span class="country-dot"></span>Portugal</li>
+          <li><span class="country-dot"></span>Italy</li>
+          <li><span class="country-dot"></span>Vatican City</li>
+          <li><span class="country-dot"></span>Denmark</li>
+          <li><span class="country-dot"></span>Sweden</li>
+          <li><span class="country-dot"></span>Norway</li>
+        </ul>
+      </div>
+
+      <div class="continent-group">
+        <div class="continent-name">🌎 Americas</div>
+        <ul class="country-list">
+          <li><span class="country-dot"></span>USA</li>
+          <li><span class="country-dot"></span>Canada</li>
+          <li><span class="country-dot"></span>Mexico</li>
+          <li><span class="country-dot"></span>Jamaica</li>
+          <li><span class="country-dot"></span>Bahamas</li>
+          <li><span class="country-dot"></span>Grand Cayman</li>
+          <li><span class="country-dot"></span>St. Martin</li>
+        </ul>
+      </div>
+
+      <div class="continent-group">
+        <div class="continent-name">🌏 Asia</div>
+        <ul class="country-list">
+          <li><span class="country-dot"></span>Japan</li>
+          <li><span class="country-dot"></span>China</li>
+          <li><span class="country-dot"></span>Thailand</li>
+          <li><span class="country-dot"></span>Singapore</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    MADE WITH LOVE &nbsp;·&nbsp; MOM'S TRAVELS &nbsp;·&nbsp; 27 DESTINATIONS
+  </footer>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-img-wrap">
+        <div class="modal-loading" id="modalLoading">🌿</div>
+        <img id="modalImg" src="" alt="" />
+        <div class="modal-img-overlay"></div>
+        <div class="modal-info">
+          <div class="modal-country" id="modalCountry"></div>
+          <div class="modal-caption" id="modalCaption"></div>
+        </div>
+      </div>
+      <div class="modal-nav">
+        <button class="nav-btn" id="prevBtn">← Prev</button>
+        <div class="photo-dots" id="photoDots"></div>
+        <button class="nav-btn" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', {
+      center: [30, 10],
+      zoom: 2,
+      zoomControl: true,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 18
+    }).addTo(map);
+
+    // Destinations — photos are fetched dynamically via AI
+    const destinations = [
+      { name: "France",           lat: 48.857, lon:   2.351, emoji: "🥐", caption: "Lavender Fields of Provence" },
+      { name: "United Kingdom",   lat: 51.507, lon:  -0.127, emoji: "🫖", caption: "Rolling Green Countryside" },
+      { name: "Northern Ireland", lat: 54.597, lon:  -5.930, emoji: "☘️", caption: "Giant's Causeway & Wild Coast" },
+      { name: "Ireland",          lat: 53.349, lon:  -6.260, emoji: "🍀", caption: "Emerald Cliffs & Misty Valleys" },
+      { name: "Netherlands",      lat: 52.367, lon:   4.904, emoji: "🌷", caption: "Tulip Fields in Bloom" },
+      { name: "Belgium",          lat: 50.847, lon:   4.357, emoji: "🍫", caption: "Ancient Forests & River Valleys" },
+      { name: "Switzerland",      lat: 46.947, lon:   7.447, emoji: "🏔️", caption: "Alpine Peaks & Crystal Lakes" },
+      { name: "Monaco",           lat: 43.730, lon:   7.422, emoji: "🎰", caption: "Mediterranean Azure Waters" },
+      { name: "Andorra",          lat: 42.506, lon:   1.521, emoji: "⛷️", caption: "Pyrenean Mountain Wilderness" },
+      { name: "Spain",            lat: 40.416, lon:  -3.703, emoji: "💃", caption: "Golden Coastlines & Olive Groves" },
+      { name: "Portugal",         lat: 38.722, lon:  -9.139, emoji: "🐟", caption: "Atlantic Cliffs & Wild Ocean" },
+      { name: "Italy",            lat: 41.896, lon:  12.482, emoji: "🍕", caption: "Tuscan Hills & Cypress Trees" },
+      { name: "Vatican City",     lat: 41.906, lon:  12.453, emoji: "⛪", caption: "Ancient Gardens & Stone Courtyards" },
+      { name: "Denmark",          lat: 55.676, lon:  12.568, emoji: "🧜", caption: "Windswept Dunes & Beech Forests" },
+      { name: "Sweden",           lat: 59.332, lon:  18.065, emoji: "🫎", caption: "Northern Lights & Pine Forests" },
+      { name: "Norway",           lat: 59.912, lon:  10.731, emoji: "🌊", caption: "Majestic Fjords & Midnight Sun" },
+      { name: "USA",              lat: 38.907, lon: -77.036, emoji: "🗽", caption: "National Parks & Grand Landscapes" },
+      { name: "Canada",           lat: 45.420, lon: -75.700, emoji: "🍁", caption: "Autumn Maples & Rocky Mountains" },
+      { name: "Mexico",           lat: 19.432, lon: -99.133, emoji: "🌮", caption: "Desert Canyons & Turquoise Cenotes" },
+      { name: "Jamaica",          lat: 18.017, lon: -76.809, emoji: "🌴", caption: "Lush Rainforests & Blue Lagoons" },
+      { name: "Bahamas",          lat: 25.044, lon: -77.350, emoji: "🏝️", caption: "Crystal Waters & Pink Sand Beaches" },
+      { name: "Grand Cayman",     lat: 19.322, lon: -81.240, emoji: "🐠", caption: "Coral Reefs & Emerald Seas" },
+      { name: "St. Martin",       lat: 18.070, lon: -63.050, emoji: "🌺", caption: "Tropical Paradise & Warm Shores" },
+      { name: "Japan",            lat: 35.676, lon: 139.650, emoji: "🌸", caption: "Cherry Blossoms & Ancient Forests" },
+      { name: "China",            lat: 39.904, lon: 116.407, emoji: "🐉", caption: "Karst Mountains & Sacred Rivers" },
+      { name: "Thailand",         lat: 13.756, lon: 100.501, emoji: "🛕", caption: "Jungle Temples & Emerald Bays" },
+      { name: "Singapore",        lat:  1.281, lon: 103.850, emoji: "🦁", caption: "Tropical Gardens & Lush Canopy" },
+    ];
+
+    // Photo cache so we don't re-fetch
+    const photoCache = {};
+
+    // Modal state
+    let currentPhotos = [];
+    let currentIdx = 0;
+
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalCountry = document.getElementById('modalCountry');
+    const modalCaption = document.getElementById('modalCaption');
+    const modalLoading = document.getElementById('modalLoading');
+    const photoDots = document.getElementById('photoDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function showPhoto(idx) {
+      currentIdx = idx;
+      modalLoading.style.display = 'flex';
+      modalImg.classList.remove('loaded');
+      modalImg.src = currentPhotos[idx];
+      modalImg.onload = () => {
+        modalLoading.style.display = 'none';
+        modalImg.classList.add('loaded');
+      };
+      modalImg.onerror = () => {
+        modalLoading.style.display = 'none';
+        modalImg.classList.add('loaded');
+        // Try next photo if this one fails
+        if (idx + 1 < currentPhotos.length) showPhoto(idx + 1);
+      };
+      document.querySelectorAll('.photo-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === currentPhotos.length - 1;
+    }
+
+    function buildDots(photos) {
+      photoDots.innerHTML = '';
+      photos.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'photo-dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => showPhoto(i);
+        photoDots.appendChild(dot);
+      });
+    }
+
+    // Use Claude to get the best Unsplash search terms for natural beauty photos
+    async function fetchPhotosForCountry(dest) {
+      if (photoCache[dest.name]) return photoCache[dest.name];
+
+      // Ask Claude for 3 specific Unsplash-style nature search queries for this country
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 300,
+          messages: [{
+            role: "user",
+            content: `Give me exactly 3 specific Unsplash photo search queries that will find stunning natural landscape photos of ${dest.name}. Focus on the most iconic natural scenery — mountains, coastlines, forests, lakes, etc. Return ONLY a JSON array of 3 short search strings (2-4 words each), no explanation. Example format: ["lavender fields provence", "eiffel tower sunrise", "normandy cliffs france"]`
+          }]
+        })
+      });
+      const data = await response.json();
+      let queries = [];
+      try {
+        const text = data.content[0].text.trim();
+        const clean = text.replace(/```json|```/g, '').trim();
+        queries = JSON.parse(clean);
+      } catch(e) {
+        queries = [`${dest.name} landscape nature`, `${dest.name} scenic mountains`, `${dest.name} natural beauty`];
+      }
+
+      // Convert queries to Unsplash source URLs (reliable, no API key needed)
+      const photos = queries.map(q =>
+        `https://source.unsplash.com/1200x800/?${encodeURIComponent(q)}`
+      );
+
+      photoCache[dest.name] = { photos, caption: dest.caption };
+      return { photos, caption: dest.caption };
+    }
+
+    async function openModal(dest) {
+      // Open modal immediately with loading state
+      modal.classList.add('open');
+      modalCountry.textContent = dest.emoji + ' ' + dest.name;
+      modalCaption.textContent = dest.caption;
+      modalLoading.style.display = 'flex';
+      modalLoading.textContent = '🌍';
+      modalImg.classList.remove('loaded');
+      modalImg.src = '';
+      photoDots.innerHTML = '';
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+
+      try {
+        const { photos } = await fetchPhotosForCountry(dest);
+        currentPhotos = photos;
+        currentIdx = 0;
+        buildDots(photos);
+        showPhoto(0);
+      } catch(e) {
+        // Fallback to generic search
+        currentPhotos = [`https://source.unsplash.com/1200x800/?${encodeURIComponent(dest.name + ' nature landscape')}`];
+        currentIdx = 0;
+        buildDots(currentPhotos);
+        showPhoto(0);
+      }
+    }
+
+    document.getElementById('modalClose').onclick = () => modal.classList.remove('open');
+    modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+    prevBtn.onclick = () => { if (currentIdx > 0) showPhoto(currentIdx - 1); };
+    nextBtn.onclick = () => { if (currentIdx < currentPhotos.length - 1) showPhoto(currentIdx + 1); };
+
+    // Keyboard nav
+    document.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'Escape') modal.classList.remove('open');
+      if (e.key === 'ArrowLeft' && currentIdx > 0) showPhoto(currentIdx - 1);
+      if (e.key === 'ArrowRight' && currentIdx < currentPhotos.length - 1) showPhoto(currentIdx + 1);
+    });
+
+    // Ctrl+scroll to zoom on map
+    const mapEl = document.getElementById('map');
+    const mapHint = document.getElementById('mapHint');
+    let hintTimeout;
+    mapEl.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey && !e.metaKey) {
+        mapHint.style.opacity = '1';
+        clearTimeout(hintTimeout);
+        hintTimeout = setTimeout(() => { mapHint.style.opacity = '0'; }, 1500);
+        e.preventDefault();
+      }
+    }, { passive: false });
+    map.on('focus', () => map.scrollWheelZoom.enable());
+    map.on('blur', () => map.scrollWheelZoom.disable());
+
+    const goldIcon = L.divIcon({
+      className: '',
+      html: `<div style="
+        width: 14px; height: 14px;
+        background: #c9a84c;
+        border: 2px solid #f5f0e8;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(201, 168, 76, 0.8), 0 0 16px rgba(201, 168, 76, 0.3);
+        cursor: pointer;
+      "></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      popupAnchor: [0, -10]
+    });
+
+    destinations.forEach(d => {
+      const marker = L.marker([d.lat, d.lon], { icon: goldIcon }).addTo(map);
+      marker.on('click', () => openModal(d));
+      marker.bindTooltip(`${d.emoji} ${d.name}`, {
+        permanent: false,
+        direction: 'top',
+        className: 'leaflet-tooltip-custom',
+        offset: [0, -10]
+      });
+    });
+  </script>
+</body>
+</html>
